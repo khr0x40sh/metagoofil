@@ -95,6 +95,7 @@ class Metagoofil:
         file_types,
         user_agent,
         download_files,
+        terms,
     ):
         self.domain = domain
         self.delay = delay
@@ -105,6 +106,7 @@ class Metagoofil:
         self.search_max = search_max
         self.download_file_limit = download_file_limit
         self.save_directory = save_directory
+        self.terms = terms
 
         # Create queue and specify the number of worker threads.
         self.queue = queue.Queue()
@@ -144,6 +146,9 @@ class Metagoofil:
                 f"[*] Searching for {self.search_max} .{filetype} files and waiting {self.delay} seconds between searches"
             )
             query = f"filetype:{filetype} site:{self.domain}"
+            if len(self.terms) > 0:
+                query += f" {self.terms}"
+                print(query)
             for url in googlesearch.search(
                 query,
                 start=0,
@@ -291,6 +296,13 @@ if __name__ == "__main__":
         action="store_true",
         default=False,
         help="Download the files, instead of just viewing search results.",
+    )
+    parser.add_argument(
+        "-T",
+        dest="terms",
+        action="store",
+        default=False,
+        help="Additional search terms you can specify.",
     )
     args = parser.parse_args()
 
